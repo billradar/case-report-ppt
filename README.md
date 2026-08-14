@@ -1,10 +1,11 @@
 # 病例汇报 PPT 改造（case-report-ppt）
 
-安全改造临床病例汇报、出科汇报和教学病例 PowerPoint 的 opencode skill。核心原则：**模板保真、内容重构、适度创新**。
+安全改造临床病例汇报、出科汇报和教学病例 PowerPoint 的跨 agent skill。核心原则：**模板保真、内容重构、适度创新**。
 
 ## 功能
 
 - 换科室 / 换病种 / 换指导老师，**只改内容、不改模板**
+- 支持操作者自行提供详细病例资料（以其为唯一事实来源），或仅凭科室/病种生成去标识化教学病例
 - 保留原模板的背景、母版、配色、页眉页脚、页码、页面顺序
 - 诊断证据链 + 异常指标标红（`#EE0000`）
 - 排版优化：字号规范、首行缩进、修复孤行、标题不重复、呈现方式多样化
@@ -16,7 +17,8 @@
 
 ```
 case-report-ppt/
-├── SKILL.md                      # 主入口
+├── SKILL.md                      # Agent Skills 入口（Claude Code / opencode）
+├── AGENTS.md                     # 通用入口（Copilot / Cursor / Windsurf / Cline 等）
 ├── README.md
 ├── .gitignore                    # templates/ 已忽略
 ├── templates/
@@ -30,10 +32,17 @@ case-report-ppt/
     └── examples.md               # 具体改造示例
 ```
 
+## 兼容的 agent
+
+- **Claude Code / opencode**：直接作为 Skill 加载（`SKILL.md`，agent-skills 格式）
+- **GitHub Copilot / Cursor / Windsurf / Cline / Codex 等**：自动读取 `AGENTS.md` 通用入口
+
+> 说明：核心知识在 `references/`（纯 Markdown，各 agent 通用）；实际修改 PPT 需要 PowerPoint MCP，无 MCP 的 agent 只能整理内容、给出可执行修改清单。
+
 ## 使用前提
 
-- opencode
-- PowerPoint MCP（`powerpoint` server）
+- 支持以上任意一种 agent
+- PowerPoint MCP（`powerpoint` server）—— 实际改 PPT 时需要
 - Windows + Microsoft PowerPoint 已安装
 
 ## 快速开始
@@ -42,6 +51,7 @@ case-report-ppt/
 
 - 「把儿科病例汇报改成感染科，病种选发热伴血小板减少综合征」
 - 「根据模板生成一份出科汇报」
+- 「按这份病例做一份出科汇报：<粘贴详细病史/查体/检验/诊断/治疗资料>」
 
 **模板选择规则**：用户指定了已有 PPT 时，以该 PPT 为模板改造；未指定、或要求「根据模板生成」时，从 `templates/病例汇报_通用模板.pptx` 复制到目标目录后使用。
 
