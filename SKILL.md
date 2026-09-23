@@ -17,9 +17,14 @@ metadata:
 
 ## 开始
 
-1. **准备：检查是否已安装 ppt-mcp（PowerPoint MCP）**。ppt-mcp 项目：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动，需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）。
-   - 探测：调用一次 `ppt_get_app_info` 或 `ppt_list_presentations`，能返回 PowerPoint 信息即已就绪。
-   - 未安装：先提示安装并给出 MCP 配置 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`；也可退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
+1. **准备：检查是否已安装 ppt-mcp（PowerPoint MCP）；未装则安装并让用户重启后继续**。
+   - 项目与依赖：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动；需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）。
+   - 探测：调用一次 `ppt_get_app_info` 或 `ppt_list_presentations`。**有返回 → 已安装，跳过安装，直接继续**。
+   - **未安装 → 安装**：
+     1. 确认 `uv` 可用（`uv --version`），缺失则先安装 uv；
+     2. 写入 MCP 客户端配置：OpenCode（`opencode.json`）用 `{"$schema":"https://opencode.ai/config.json","mcp":{"powerpoint":{"type":"local","command":["uvx","ppt-mcp"],"enabled":true}}}`；其他客户端用 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`；
+     3. **提示用户重启 OpenCode / 会话**（MCP 仅在启动时加载），重启后继续。
+   - 重启后仍不可用：退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
 2. 先用 OpenCode 的文件读取能力加载 [workflow.md](references/workflow.md)，并在任何编辑前创建、验证安全副本。
 3. 盘点源 PPT 的页面、母版、背景、版式、可编辑元素和已有动画；建立唯一的病例数据源（优先采用操作者自行提供的详细病例资料；未提供时才据科室/病种生成去标识化教学病例）。
 4. 按任务读取需要的参考文件：
