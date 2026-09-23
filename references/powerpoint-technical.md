@@ -1,5 +1,11 @@
 # PowerPoint MCP 与 PowerShell COM 注意事项
 
+## 首选工具：ppt-mcp
+
+- 首选 **ppt-mcp**（PowerPoint MCP）：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动，需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）；本 skill 中的 `ppt_*` 工具即来自它。
+- 探测是否就绪：调用 `ppt_get_app_info` 或 `ppt_list_presentations`，能返回 PowerPoint 信息即已安装可用；若工具不存在，说明未安装或未连接。
+- 未安装：给出标准配置 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}` 并请用户安装；也可退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
+
 ## 编辑原则
 
 - 先探测能力与对象，再写入。不同 MCP、PowerPoint 版本和受保护对象的行为不同；不要假设某个工具或属性必然可用。

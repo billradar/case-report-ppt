@@ -1,5 +1,11 @@
 # 安全工作流
 
+## 0. 环境准备
+
+- **检查是否已安装 ppt-mcp（PowerPoint MCP）**：https://github.com/ykuwai/ppt-mcp （以 `uvx ppt-mcp` 启动，需 uv 与本机 Microsoft PowerPoint）。
+- 探测：调用 `ppt_get_app_info` / `ppt_list_presentations`；有返回即已就绪。
+- 未安装：先给出安装与配置（标准配置 `uvx ppt-mcp`）或请用户人工安装；无 MCP 时可退回 PowerShell COM / python-pptx，确实无自动化能力时降级为“只整理内容与可执行修改清单”，不伪称已改 PPT。
+
 ## 1. 接收与边界确认
 
 - 确认源文件、最终文件名、病例资料来源、允许调整范围和交付路径。
