@@ -36,6 +36,9 @@ metadata:
 | PowerPoint MCP、PowerShell COM、格式保留或兼容性问题 | [powerpoint-technical.md](references/powerpoint-technical.md) |
 | 完成前审查、渲染检查、恢复与交付 | [validation.md](references/validation.md) |
 | 页面改造取舍或文字示例 | [examples.md](references/examples.md) |
+| 选现成高质量病例 / 换科室病种 | [case-library.md](references/case-library.md) 与 `cases/` |
+
+**优先用病例库**：先在 `cases/` 中按科室/病种选用现成高质量病例（见 [case-library.md](references/case-library.md)），不足时再生成。
 
 从项目根目录使用本技能时，参考文件位于 `.opencode/skills/case-report-ppt/references/`。不要假设 OpenCode 已安装 PowerPoint MCP；先检查当前可用工具。无 PowerPoint 自动化能力时，只整理内容、提出可执行修改清单或请求用户提供可编辑环境，不伪称已修改 PPT。
 

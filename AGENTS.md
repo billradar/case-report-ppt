@@ -16,6 +16,7 @@
 | PowerPoint MCP / PowerShell COM 技术坑 | `references/powerpoint-technical.md` |
 | 完成前审查、渲染检查、交付 | `references/validation.md` |
 | 页面改造取舍与文字示例 | `references/examples.md` |
+| 现成高质量病例、选病例 / 扩病例库 | `references/case-library.md` 与 `cases/` |
 
 ## 核心原则（摘要）
 
@@ -34,9 +35,11 @@
 
 ## 工具依赖（重要）
 
-- 实际修改 PPT 需要 **PowerPoint MCP**（`powerpoint` server）+ Windows 已安装 Microsoft PowerPoint
-- 无 PowerPoint MCP 时：只整理内容、建立病例数据源、给出可执行修改清单，或请求用户提供可编辑环境；**不伪称已修改 PPT**
+- 首选 **ppt-mcp**（PowerPoint MCP）：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动（需 uv 与本机 Microsoft PowerPoint）
+- 准备阶段先探测：调用 `ppt_get_app_info` / `ppt_list_presentations`；**已装则跳过，直接继续**
+- **未装则安装**：确认/安装 `uv`；OpenCode 写入 `opencode.json` 的 `mcp.powerpoint = {"type":"local","command":["uvx","ppt-mcp"],"enabled":true}`（其他客户端用 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`），然后**提示用户重启 OpenCode/会话后继续**
+- 仍不可用时退回 PowerShell COM / python-pptx；无自动化能力时只整理内容、建立病例数据源、给出可执行修改清单，**不伪称已修改 PPT**
 
 ## 完成标准
 
-交付时说明：输出路径、修改范围、待临床核实项、是否通过质检；保留原件和工作副本。
+交付时说明：输出路径、修改范围、待临床核实项、是否通过质检；保留原件，交付后删除工作副本。
