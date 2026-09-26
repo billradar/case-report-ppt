@@ -17,14 +17,7 @@ metadata:
 
 ## 开始
 
-1. **准备：检查是否已安装 ppt-mcp（PowerPoint MCP）；未装则安装并让用户重启后继续**。
-   - 项目与依赖：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动；需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）。
-   - 探测：调用一次 `ppt_get_app_info` 或 `ppt_list_presentations`。**有返回 → 已安装，跳过安装，直接继续**。
-   - **未安装 → 安装**：
-     1. 确认 `uv` 可用（`uv --version`），缺失则先安装 uv；
-     2. 写入 MCP 客户端配置：OpenCode（`opencode.json`）用 `{"$schema":"https://opencode.ai/config.json","mcp":{"powerpoint":{"type":"local","command":["uvx","ppt-mcp"],"enabled":true}}}`；其他客户端用 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`；
-     3. **提示用户重启 OpenCode / 会话**（MCP 仅在启动时加载），重启后继续。
-   - 重启后仍不可用：退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
+1. **探测当前环境的 PPT 编辑能力**：先确认是否有可用的 PowerPoint MCP、原生 PowerPoint、其他可靠的 PPTX 编辑/渲染工具，以及源文件和模板是否可访问。按 [powerpoint-technical.md](references/powerpoint-technical.md) 选择路径；只有用户希望使用 ppt-mcp 且环境适用时才安装或修改客户端配置。没有可靠编辑能力时，整理病例内容和可执行修改清单，并明确未生成 PPT。
 2. 先用 OpenCode 的文件读取能力加载 [workflow.md](references/workflow.md)，并在任何编辑前创建、验证安全副本。
 3. 盘点源 PPT 的页面、母版、背景、版式、可编辑元素和已有动画；建立唯一的病例数据源（优先采用操作者自行提供的详细病例资料；未提供时才据科室/病种生成去标识化教学病例）。
 4. 按任务读取需要的参考文件：
@@ -40,14 +33,14 @@ metadata:
 
 **优先用病例库**：先在 `cases/` 中按科室/病种选用现成高质量病例（见 [case-library.md](references/case-library.md)），不足时再生成。
 
-从项目根目录使用本技能时，参考文件位于 `.opencode/skills/case-report-ppt/references/`。不要假设 OpenCode 已安装 PowerPoint MCP；先检查当前可用工具。无 PowerPoint 自动化能力时，只整理内容、提出可执行修改清单或请求用户提供可编辑环境，不伪称已修改 PPT。
+从仓库根目录使用时，参考文件位于 `references/`；作为客户端 skill 安装时，以本 `SKILL.md` 所在目录解析相对链接。不要假设已安装 PowerPoint MCP；先检查当前可用工具。无可靠 PPT 编辑能力时，只整理内容与修改清单，不伪称已修改 PPT。
 
 ## 不可突破的边界
 
 - 不改页面尺寸/比例、主题、主题色、核心品牌字体、主背景、Logo、母版核心元素、页眉页脚或页码体系，除非用户明确授权。
 - 不随意删页、改页序、删流程页或整体替换母版。
 - 不在原件上试错；只编辑已验证为当前激活文档的副本。
-- 不编造病史、检查、治疗、疗效、指南结论或正常值；不确定项标注“待核实”。
+- 真实病例只使用有来源的患者资料，不编造病史、检查、治疗、疗效、指南结论或正常值；缺失项标注“待核实”。虚构教学病例必须明确标示其性质，且不得冒充真实患者资料。
 - 删除或遮蔽可识别个人信息；不把病例材料上传至未经授权的外部服务。
 
 ## 默认决策
@@ -62,5 +55,5 @@ metadata:
 ## 交付
 
 - 文件名固定为 `NAME-科室-病例汇报.pptx`（NAME 为汇报人、科室为轮转科室；不再附加病种、日期等），工作/恢复副本用 `NAME-科室-病例汇报_working.pptx`。
-- 幻灯片（正文、页脚、备注、图片替代文本）一律不写“教学病例模拟数据”“模拟数据”“仅用于演示”等模拟/演示字样；确需说明数据性质或脱敏情况时，只写在交付说明里，不写进幻灯片。
+- 幻灯片标题页或资料来源页明确标注病例性质：虚构内容写“虚构教学病例”，真实病例写“真实病例（已脱敏）”。交付说明也保留相同标注；不得只在交付说明中披露。临床判断、剂量和结局在教学使用前须由具备资质的临床人员核实。
 - 保存为明确命名的最终副本；交付后删除工作副本，只保留最终版与原件，目标目录不留 `_working` 文件。汇报时说明：输出路径、修改范围、待临床核实项，以及是否通过最终质检。
