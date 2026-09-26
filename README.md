@@ -12,13 +12,13 @@
 - 克制动画 / 切换（Fade、Appear、Wipe、Morph）
 - 医学一致性检查 + 去标识化
 - 完成后逐页质检清单（内容 / 视觉 / 技术）
-- 内置病例库（`cases/`，12 个高质量教学病例）
+- 内置病例库（`cases/`，20 科室 120 例教学病例及 8 例死亡病例讨论）
 
 ## 病例库（预置）
 
-`cases/` 内置 12 个去标识化高质量教学病例：儿科川崎病、新生儿 ABO 溶血性黄疸、血液科 ITP、产科子痫前期、呼吸科 CAP、心内科 STEMI、内分泌 DKA、消化科溃疡并出血、神经内科脑梗死、普外科急性阑尾炎、肾内科急性肾小球肾炎、感染科慢性乙型肝炎。
+`cases/<科室>/` 内置 20 个科室、每科室 5 个常见病种与 1 个疑难病种，共 120 例；`cases/死亡病例讨论/` 另有 8 例，连同 `cases/_TEMPLATE.md` 共 129 个 Markdown 文件。全部按**虚构教学病例**处理，不能冒充真实病历。
 
-按科室/病种直接选用；不足时据 `cases/_TEMPLATE.md` 扩展。索引与选用规则见 [references/case-library.md](references/case-library.md)。
+按科室/病种选用；不足时据 `cases/_TEMPLATE.md` 扩展。索引与选用规则见 [references/case-library.md](references/case-library.md)。
 
 ## 目录结构
 
@@ -40,7 +40,9 @@ case-report-ppt/
     └── case-library.md           # 病例库索引与选用规则
 cases/
   ├── _TEMPLATE.md                # 新增病例模板
-  └── <科室>-<病种>.md            # 现成高质量病例（12 个，覆盖多科室）
+  ├── <科室>/                     # 20 科室，每科 6 例
+  │   └── <序号>-<病种>.md
+  └── 死亡病例讨论/               # 8 例
 ```
 
 ## 兼容的 agent
@@ -53,8 +55,8 @@ cases/
 ## 使用前提
 
 - 支持以上任意一种 agent
-- PowerPoint MCP（`powerpoint` server）—— 实际改 PPT 时需要
-- Windows + Microsoft PowerPoint 已安装
+- 可用的 PPT 编辑工具，以及逐页预览和重新打开验证能力；ppt-mcp 是可选路径之一
+- 使用 ppt-mcp 时，环境还需满足该工具的运行要求
 
 ## 快速开始
 
@@ -78,14 +80,14 @@ cases/
 
 ## 命名约定
 
-- 工作副本：`病例汇报_YYYYMMDD_working.pptx`
-- 最终版：`病例汇报_YYYYMMDD_final.pptx`
+- 工作副本：`NAME-科室-病例汇报_working.pptx`
+- 最终版：`NAME-科室-病例汇报.pptx`
 - 不要用笼统的 `test.pptx`
 
 ## 注意事项
 
 - **模板文件不入库**：`templates/病例汇报_通用模板.pptx` 已被 `.gitignore` 忽略，clone / 分享项目后需手动放入（或从本地原文件复制）
-- **医学内容需临床核实**：skill 只做呈现与一致性审查，不替代临床判断；虚构教学病例的数值须经临床医生审核
+- **病例性质须明示**：PPT 标题页或资料来源页标注“虚构教学病例”或“真实病例（已脱敏）”；前者的数值、处置和结局须经临床人员审核，不得随机设定死亡结局
 - **去标识化**：移除姓名、住院号、证件、联系方式等可识别信息（含截图、页眉页脚、备注）
 - **母版永不修改**：编辑前先复制模板到目标目录，母版保持干净
 
