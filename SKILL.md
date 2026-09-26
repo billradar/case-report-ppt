@@ -24,7 +24,7 @@ metadata:
 
 | 情形 | 必读文件 |
 | --- | --- |
-| 病例资料、诊断、检查、隐私、图片检索/授权或医学一致性 | [medical-content.md](references/medical-content.md) |
+| 病例资料、诊断、检查、隐私、影像/DICOM 检索与授权或医学一致性 | [medical-content.md](references/medical-content.md) |
 | 重排版、字体、缩进、动画、切换或可视化表达 | [layout-design.md](references/layout-design.md) |
 | PowerPoint MCP、PowerShell COM、格式保留或兼容性问题 | [powerpoint-technical.md](references/powerpoint-technical.md) |
 | 完成前审查、渲染检查、恢复与交付 | [validation.md](references/validation.md) |
@@ -50,6 +50,7 @@ metadata:
 - 呈现方式可创新：不要求全篇套用相同表格或列举，根据内容选择最合适的可视化形式，同时保持视觉语言统一。需要真实医学图片且用户未提供时，按 medical-content 的检索流程选择许可适用的公开原图，作为明确标注的示例图片加入 PPT；有水印时先找合法无水印原版，仅在自有或明确获准修改时执行去水印并核验医学信息；不得伪装成本病例检查。
 - 仅用克制的 Fade、Appear、Wipe 或简单 Morph；动画服务讲解顺序，单页通常不超过 5 个动画元素。
 - 诊断关键阳性信息和异常指标使用 `#EE0000`，并保留语义、单位、参考范围和采集时间。
+- 影像页优先放可直接观看的关键切片或短序列；需要原始 DICOM 时，在支持的桌面 PowerPoint 中按 powerpoint-technical 尝试嵌入为对象并实测，网页/手机端保留静态或视频回退。公开影像示例不得冒充本病例检查。
 - 每次明显改动后做页面级检查；完成后按 validation 清单逐页渲染核验。
 
 ## 交付
