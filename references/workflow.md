@@ -2,20 +2,16 @@
 
 ## 0. 环境准备
 
-- **检查是否已安装 ppt-mcp（PowerPoint MCP）**：https://github.com/ykuwai/ppt-mcp （`uvx ppt-mcp`，需 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint）。
-- 探测：调用 `ppt_get_app_info` / `ppt_list_presentations`。**有返回 → 已安装，跳过安装，直接进入 §1**。
-- **未安装 → 安装，然后请用户重启后继续**：
-  1. 确认 `uv` 可用（`uv --version`），缺失则先安装 uv；
-  2. 写入 MCP 客户端配置：OpenCode（`opencode.json`）用 `{"$schema":"https://opencode.ai/config.json","mcp":{"powerpoint":{"type":"local","command":["uvx","ppt-mcp"],"enabled":true}}}`；其他客户端用 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`；
-  3. **提示用户重启 OpenCode / 会话**（MCP 仅启动时加载），重启后继续执行；
-  4. 仍不可用 → 无 MCP 时可退回 PowerShell COM / python-pptx，确实无自动化能力时降级为“只整理内容与可执行修改清单”，不伪称已改 PPT。
+- 检查源文件、模板、当前系统、可用的 PPT 编辑工具和渲染/重开验证能力。按 [powerpoint-technical.md](powerpoint-technical.md) 选择适用路径。
+- 如已有 PowerPoint MCP，可探测 `ppt_get_app_info` / `ppt_list_presentations`；如没有，评估现有 PowerPoint 或其他可靠的 PPTX 工具。安装 ppt-mcp、uv 或修改客户端配置须符合用户选择的环境和任务需求，不作为默认前置条件。
+- 如无法可靠编辑并验证 PPT，仅交付内容草稿与修改清单，明确未生成或修改 PPT。
 
 ## 1. 接收与边界确认
 
 - 确认源文件、最终文件名、病例资料来源、允许调整范围和交付路径。
 - 模板选择：用户指定了已有 PPT（如某科室病例汇报）时，以该已有 PPT 为模板进行改造；未指定、或用户要求「根据模板生成」时，用文件系统把 skill 内通用模板 `templates/病例汇报_通用模板.pptx`（见 SKILL.md 约定常量）复制到目标 PPT 目录后作为起点，不直接编辑母版。
 - 记录用户明确允许变更的页面/元素；未授权项默认保护。
-- 病例资料来源：优先采用操作者自行提供的详细病例（病史、查体、检验、影像、诊断、治疗等），以其为唯一事实来源；未提供时，可据科室与病种按通用知识生成去标识化教学病例，但须明确标注“待临床核实”。
+- 病例资料来源：真实病例以操作者提供的详细病史、查体、检验、影像、诊断和治疗资料为唯一患者事实来源；未提供时可选用或编写虚构教学病例，但必须在 PPT 内标注“虚构教学病例”。按 [medical-content.md](medical-content.md) 区分两类资料，临床细节与结局须经审核。
 - 若病史或检验资料不完整，列出缺口，不以“合理推断”补成患者事实。
 
 ## 2. 保护原件：先复制，后打开编辑副本
@@ -32,7 +28,7 @@ OneDrive/PowerPoint 的 AutoSave 可能实时写回当前文档。安全顺序�
 
 使用 skill 内母版模板（`templates/病例汇报_通用模板.pptx`，见 SKILL.md 约定常量）时：先用文件系统 `Copy-Item` 把母版复制到目标 PPT 目录并命名，再打开该副本编辑；母版本身永不打开、永不修改。
 
-建议名称：`病例汇报_YYYYMMDD_working.pptx`；最终版为 `病例汇报_YYYYMMDD_final.pptx`。不要把工作副本命名为笼统的 `test.pptx`，以免误覆盖或难以追溯。
+命名以 [SKILL.md](../SKILL.md) 的交付约定为准：工作副本 `NAME-科室-病例汇报_working.pptx`，最终版 `NAME-科室-病例汇报.pptx`。不要用笼统的 `test.pptx`，以免误覆盖。
 
 若源文件已被 AutoSave 改动：立刻停止继续修改；保留当前状态；优先从版本历史、只读副本或云端版本恢复，再重新建立工作副本。不要用未经确认的版本覆盖原件。
 
