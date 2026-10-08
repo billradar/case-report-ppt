@@ -17,21 +17,14 @@ metadata:
 
 ## 开始
 
-1. **准备：检查是否已安装 ppt-mcp（PowerPoint MCP）；未装则安装并让用户重启后继续**。
-   - 项目与依赖：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动；需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）。
-   - 探测：调用一次 `ppt_get_app_info` 或 `ppt_list_presentations`。**有返回 → 已安装，跳过安装，直接继续**。
-   - **未安装 → 安装**：
-     1. 确认 `uv` 可用（`uv --version`），缺失则先安装 uv；
-     2. 写入 MCP 客户端配置：OpenCode（`opencode.json`）用 `{"$schema":"https://opencode.ai/config.json","mcp":{"powerpoint":{"type":"local","command":["uvx","ppt-mcp"],"enabled":true}}}`；其他客户端用 `{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`；
-     3. **提示用户重启 OpenCode / 会话**（MCP 仅在启动时加载），重启后继续。
-   - 重启后仍不可用：退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
+1. **探测当前环境的 PPT 编辑能力**：先确认是否有可用的 PowerPoint MCP、原生 PowerPoint、其他可靠的 PPTX 编辑/渲染工具，以及源文件和模板是否可访问。按 [powerpoint-technical.md](references/powerpoint-technical.md) 选择路径；只有用户希望使用 ppt-mcp 且环境适用时才安装或修改客户端配置。没有可靠编辑能力时，整理病例内容和可执行修改清单，并明确未生成 PPT。
 2. 先用 OpenCode 的文件读取能力加载 [workflow.md](references/workflow.md)，并在任何编辑前创建、验证安全副本。
 3. 盘点源 PPT 的页面、母版、背景、版式、可编辑元素和已有动画；建立唯一的病例数据源（优先采用操作者自行提供的详细病例资料；未提供时才据科室/病种生成去标识化教学病例）。
 4. 按任务读取需要的参考文件：
 
 | 情形 | 必读文件 |
 | --- | --- |
-| 病例资料、诊断、检查、隐私或医学一致性 | [medical-content.md](references/medical-content.md) |
+| 病例资料、诊断、检查、隐私、影像/DICOM 检索与授权或医学一致性 | [medical-content.md](references/medical-content.md) |
 | 重排版、字体、缩进、动画、切换或可视化表达 | [layout-design.md](references/layout-design.md) |
 | PowerPoint MCP、PowerShell COM、格式保留或兼容性问题 | [powerpoint-technical.md](references/powerpoint-technical.md) |
 | 完成前审查、渲染检查、恢复与交付 | [validation.md](references/validation.md) |
@@ -40,27 +33,28 @@ metadata:
 
 **优先用病例库**：先在 `cases/` 中按科室/病种选用现成高质量病例（见 [case-library.md](references/case-library.md)），不足时再生成。
 
-从项目根目录使用本技能时，参考文件位于 `.opencode/skills/case-report-ppt/references/`。不要假设 OpenCode 已安装 PowerPoint MCP；先检查当前可用工具。无 PowerPoint 自动化能力时，只整理内容、提出可执行修改清单或请求用户提供可编辑环境，不伪称已修改 PPT。
+从仓库根目录使用时，参考文件位于 `references/`；作为客户端 skill 安装时，以本 `SKILL.md` 所在目录解析相对链接。不要假设已安装 PowerPoint MCP；先检查当前可用工具。无可靠 PPT 编辑能力时，只整理内容与修改清单，不伪称已修改 PPT。
 
 ## 不可突破的边界
 
 - 不改页面尺寸/比例、主题、主题色、核心品牌字体、主背景、Logo、母版核心元素、页眉页脚或页码体系，除非用户明确授权。
 - 不随意删页、改页序、删流程页或整体替换母版。
 - 不在原件上试错；只编辑已验证为当前激活文档的副本。
-- 不编造病史、检查、治疗、疗效、指南结论或正常值；不确定项标注“待核实”。
-- 删除或遮蔽可识别个人信息；不把病例材料上传至未经授权的外部服务。
+- 真实病例只使用有来源的患者资料，不编造病史、检查、治疗、疗效、指南结论或正常值；缺失项标注“待核实”。虚构教学病例必须明确标示其性质，且不得冒充真实患者资料。
+- 删除或遮蔽可识别个人信息；病例图片须确认使用权限、来源与脱敏，检查内嵌原图和元数据；不把病例材料上传至未经授权的外部服务。虚构病例使用公开教学图片时，明确标注“示例图片，非本病例检查”，不得作为该患者的诊断证据。
 
 ## 默认决策
 
 - 模板选择：用户指定了已有 PPT 时以该 PPT 为模板改造；未指定、或要求「根据模板生成」时，把 skill 内通用模板 `templates/病例汇报_通用模板.pptx` 复制到目标目录后作为起点（复制而非直接编辑母版）。
 - `layout_change_level = 2`（适度重排）：保留视觉语言，按医学叙事重组信息。
-- 呈现方式可创新：不要求全篇套用相同表格或列举，根据内容选择最合适的可视化形式，同时保持视觉语言统一。
+- 呈现方式可创新：不要求全篇套用相同表格或列举，根据内容选择最合适的可视化形式，同时保持视觉语言统一。需要真实医学图片且用户未提供时，按 medical-content 的检索流程选择许可适用的公开原图，作为明确标注的示例图片加入 PPT；有水印时先找合法无水印原版，仅在自有或明确获准修改时执行去水印并核验医学信息；不得伪装成本病例检查。
 - 仅用克制的 Fade、Appear、Wipe 或简单 Morph；动画服务讲解顺序，单页通常不超过 5 个动画元素。
 - 诊断关键阳性信息和异常指标使用 `#EE0000`，并保留语义、单位、参考范围和采集时间。
+- 影像页优先放可直接观看的关键切片或短序列；需要原始 DICOM 时，在支持的桌面 PowerPoint 中按 powerpoint-technical 尝试嵌入为对象并实测，网页/手机端保留静态或视频回退。公开影像示例不得冒充本病例检查。
 - 每次明显改动后做页面级检查；完成后按 validation 清单逐页渲染核验。
 
 ## 交付
 
 - 文件名固定为 `NAME-科室-病例汇报.pptx`（NAME 为汇报人、科室为轮转科室；不再附加病种、日期等），工作/恢复副本用 `NAME-科室-病例汇报_working.pptx`。
-- 幻灯片（正文、页脚、备注、图片替代文本）一律不写“教学病例模拟数据”“模拟数据”“仅用于演示”等模拟/演示字样；确需说明数据性质或脱敏情况时，只写在交付说明里，不写进幻灯片。
+- 幻灯片标题页或资料来源页明确标注病例性质：虚构内容写“虚构教学病例”，真实病例写“真实病例（已脱敏）”。交付说明也保留相同标注；不得只在交付说明中披露。临床判断、剂量和结局在教学使用前须由具备资质的临床人员核实。
 - 保存为明确命名的最终副本；交付后删除工作副本，只保留最终版与原件，目标目录不留 `_working` 文件。汇报时说明：输出路径、修改范围、待临床核实项，以及是否通过最终质检。

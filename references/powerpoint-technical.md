@@ -1,11 +1,17 @@
 # PowerPoint MCP 与 PowerShell COM 注意事项
 
-## 首选工具：ppt-mcp
+## 工具选择
 
-- 首选 **ppt-mcp**（PowerPoint MCP）：https://github.com/ykuwai/ppt-mcp ，以 `uvx ppt-mcp` 启动，需要 [uv](https://docs.astral.sh/uv/getting-started/installation/) 与本机 Microsoft PowerPoint（Windows/macOS）；本 skill 中的 `ppt_*` 工具即来自它。
-- 探测：调用 `ppt_get_app_info` / `ppt_list_presentations`。**有返回 → 已安装，跳过安装，直接继续**。
-- **未安装 → 安装，然后请用户重启后继续**：① 确认 `uv` 可用（`uv --version`），缺失先装 uv；② OpenCode 写入 `opencode.json`：`{"$schema":"https://opencode.ai/config.json","mcp":{"powerpoint":{"type":"local","command":["uvx","ppt-mcp"],"enabled":true}}}`（其他客户端：`{"mcpServers":{"powerpoint":{"command":"uvx","args":["ppt-mcp"]}}}`）；③ **提示用户重启 OpenCode / 会话**后继续。
-- 重启后仍不可用：退回 PowerShell COM / python-pptx；确无自动化能力时，只整理内容与可执行修改清单，不伪称已改 PPT。
+- 先检查当前环境中可用的 PowerPoint、PPT 编辑工具、预览和重新打开验证能力。已配置 ppt-mcp 时可探测 `ppt_get_app_info` / `ppt_list_presentations`；不要把“未返回”直接等同于必须安装。
+- ppt-mcp 是有本机 PowerPoint 且客户端支持 MCP 时的一种选择。只有用户明确采用这一路径且当前环境适用，才按其项目文档安装依赖和配置；避免覆盖已有客户端配置。
+- 无 MCP 时可按环境选用 PowerPoint 原生自动化、受支持的 PPTX 工具或人工编辑；应检查复杂对象和格式保留。无法可靠编辑或验证时，只交付内容与修改清单，不宣称已改 PPT。
+
+## DICOM 在 PPT 中的交付方式
+
+1. **可直接观看**：从已核对来源的 DICOM 序列导出关键切片 PNG；需要逐帧展示时导出短 MP4 并嵌入幻灯片。保留模态、部位、序列/期相和来源。MP4 兼容性仍需在目标 PowerPoint 中实测。
+2. **打开原始文件**：在支持 OLE 的桌面 PowerPoint 中，可用“插入 → 对象 → 从文件创建 → 显示为图标”嵌入单个脱敏 DICOM 或序列 ZIP（不要勾选“链接”以免依赖本地路径）。双击图标时通常由系统关联的 DICOM 查看器或解压工具打开，这是离开幻灯片的外部程序，不是 PPT 原生阅片。可用 `Shapes.AddOLEObject` 做自动化，但须在目标环境验证。
+3. **兼容性回退**：Web/移动端不能假定可激活嵌入对象。若目标环境无法打开或文件过大，保留 PPT 内的关键切片/视频，将脱敏 DICOM 序列另附为独立文件，并在交付说明中写明查看器需求、文件关联和未验证的平台；不要把外部路径链接说成真正嵌入。
+4. **验证**：在目标桌面 PowerPoint 中关闭并重新打开 PPT，测试放映中的点击、对象能否提取、DICOM 查看器能否显示同一 study/series；再检查网页/手机端的静态图片或视频回退。任一环节失败就撤下“可在 PPT 中打开”的承诺。
 
 ## 编辑原则
 
